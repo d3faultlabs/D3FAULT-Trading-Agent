@@ -13,7 +13,7 @@ This repository contains the D3FAULT Trading Agent — an autonomous on-chain tr
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Report privately via email: **security@d3fault.sh**
+Report privately via email: **contact@d3fault.sh**
 
 Include:
 - Description of the vulnerability
