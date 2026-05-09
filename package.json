@@ -1,0 +1,31 @@
+{
+  "name": "d3fault-trading-agent",
+  "version": "1.0.0",
+  "description": "Autonomous Solana memecoin trading agent — Jupiter V6 swaps, 12-factor momentum scoring, non-custodial browser execution.",
+  "author": "D3FAULT Labs <contact@d3fault.sh>",
+  "license": "MIT",
+  "homepage": "https://d3fault.sh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/d3faultlabs/D3FAULT-Trading-Agent.git"
+  },
+  "keywords": [
+    "solana",
+    "trading-agent",
+    "dex",
+    "jupiter",
+    "memecoin",
+    "defi",
+    "typescript",
+    "non-custodial"
+  ],
+  "dependencies": {
+    "@solana/web3.js": "^1.98.0",
+    "drizzle-orm": "^0.36.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.0",
+    "typescript": "^5.7.0"
+  }
+}
