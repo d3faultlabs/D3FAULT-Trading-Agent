@@ -7,7 +7,7 @@ const router = Router();
 /* ── GET /api/agent/data/:pubkey/trades ──────────────────────────────────── */
 router.get("/agent/data/:pubkey/trades", async (req: Request, res: Response) => {
   try {
-    const { pubkey } = req.params;
+    const pubkey = req.params.pubkey as string;
     const { eq } = await import("drizzle-orm");
     const rows = await db
       .select()
@@ -40,7 +40,7 @@ router.get("/agent/data/:pubkey/trades", async (req: Request, res: Response) => 
 /* ── POST /api/agent/data/:pubkey/trades ─────────────────────────────────── */
 router.post("/agent/data/:pubkey/trades", async (req: Request, res: Response) => {
   try {
-    const { pubkey } = req.params;
+    const pubkey = req.params.pubkey as string;
     const trades: Array<Record<string, unknown>> = req.body;
     if (!Array.isArray(trades) || trades.length === 0) { res.json({ ok: true }); return; }
 
@@ -77,7 +77,7 @@ router.post("/agent/data/:pubkey/trades", async (req: Request, res: Response) =>
 /* ── GET /api/agent/data/:pubkey/positions ───────────────────────────────── */
 router.get("/agent/data/:pubkey/positions", async (req: Request, res: Response) => {
   try {
-    const { pubkey } = req.params;
+    const pubkey = req.params.pubkey as string;
     const { eq } = await import("drizzle-orm");
     const rows = await db
       .select()
@@ -92,7 +92,7 @@ router.get("/agent/data/:pubkey/positions", async (req: Request, res: Response) 
 /* ── POST /api/agent/data/:pubkey/positions ──────────────────────────────── */
 router.post("/agent/data/:pubkey/positions", async (req: Request, res: Response) => {
   try {
-    const { pubkey } = req.params;
+    const pubkey = req.params.pubkey as string;
     const positions: Array<Record<string, unknown>> = req.body;
     if (!Array.isArray(positions)) { res.json({ ok: true }); return; }
 
@@ -119,7 +119,8 @@ router.post("/agent/data/:pubkey/positions", async (req: Request, res: Response)
 /* ── DELETE /api/agent/data/:pubkey/positions/:mint ─────────────────────── */
 router.delete("/agent/data/:pubkey/positions/:mint", async (req: Request, res: Response) => {
   try {
-    const { pubkey, mint } = req.params;
+    const pubkey = req.params.pubkey as string;
+    const mint = req.params.mint as string;
     const { and, eq } = await import("drizzle-orm");
     await db.delete(agentPositions).where(
       and(eq(agentPositions.agentPubkey, pubkey), eq(agentPositions.mint, mint))
