@@ -33,7 +33,7 @@ CoinGecko     model (0-100)  on-chain confirm
 | **Chain** | Solana Mainnet |
 | **Swap Router** | Jupiter Aggregator V6 |
 | **Wallet** | Privy embedded wallet (non-custodial) |
-| **Persistence** | PostgreSQL (Drizzle ORM) + localStorage fast-path |
+| **Persistence** | localStorage |
 | **Scan sources** | DexScreener · pump.fun · CoinGecko |
 | **Strategy** | Momentum + MCap sweet-spot (targeting 2–3×) |
 | **Scan interval** | Configurable — default 90 s |
@@ -63,7 +63,7 @@ CoinGecko     model (0-100)  on-chain confirm
 │                                                             │
 │   ┌──────────────────────────────────────────────────────┐  │
 │   │                    Persistence                       │  │
-│   │  localStorage (sync) → PostgreSQL (fire-and-forget)  │  │
+│   │                   localStorage (sync)                │  │
 │   └──────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -242,58 +242,11 @@ State persisted on every `emit()` — two layers, one authoritative.
 | `d3f:trades:{agentPubkey}` | `TradeRecord[]` JSON | 200 records |
 | `d3f:openPositions:{agentPubkey}` | `Position[]` JSON | all open positions |
 
-### PostgreSQL — authoritative (fire-and-forget)
-
-```sql
-CREATE TABLE agent_trades (
-  id           TEXT    NOT NULL,
-  agent_pubkey TEXT    NOT NULL,
-  mint         TEXT    NOT NULL,
-  symbol       TEXT    NOT NULL,
-  name         TEXT,
-  image_url    TEXT,
-  side         TEXT    NOT NULL,     -- 'buy' | 'sell'
-  amount_sol   FLOAT8  NOT NULL,
-  price_usd    FLOAT8,
-  pnl_pct      FLOAT8,
-  pnl_sol      FLOAT8,
-  sig          TEXT    NOT NULL,
-  ts           BIGINT  NOT NULL,     -- Unix ms
-  reason       TEXT,                 -- exit trigger label
-  duration_ms  BIGINT,               -- hold time ms
-  PRIMARY KEY (id, agent_pubkey)
-);
-CREATE INDEX idx_agent_trades_pubkey_ts ON agent_trades (agent_pubkey, ts DESC);
-
-CREATE TABLE agent_positions (
-  mint         TEXT    NOT NULL,
-  agent_pubkey TEXT    NOT NULL,
-  data         JSONB   NOT NULL,     -- full Position object
-  PRIMARY KEY (mint, agent_pubkey)
-);
-```
-
 **Load order on mount:**
 
 ```
 1. localStorage   →  instant render
-2. GET /trades    →  DB overwrites local cache if data found
-3. GET /positions →  DB overwrites local cache if data found
 ```
-
----
-
-## REST API
-
-Routes mounted under `/api/agent/data/:pubkey`.
-
-| Method | Path | Action |
-|---|---|---|
-| `GET` | `/trades` | All trades, `ts DESC` |
-| `POST` | `/trades` | Upsert — `ON CONFLICT DO NOTHING` |
-| `GET` | `/positions` | All open positions |
-| `POST` | `/positions` | Replace-all (delete + insert) |
-| `DELETE` | `/positions/:mint` | Remove single position |
 
 ---
 
@@ -428,7 +381,6 @@ Fill in `.env`:
 |---|---|---|
 | `SOLANA_RPC_ENDPOINT` | ✓ | Primary Solana RPC (Helius recommended) |
 | `SOLANA_RPC_ENDPOINT_2` | — | Fallback RPC endpoint |
-| `DATABASE_URL` | ✓ | PostgreSQL connection string |
 | `VITE_PRIVY_APP_ID` | ✓ | Privy app ID for embedded wallet |
 
 ---
