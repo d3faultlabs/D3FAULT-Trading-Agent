@@ -4,7 +4,6 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
     "lib": ["ES2022", "DOM"],
     "outDir": "./dist",
@@ -12,7 +11,8 @@
     "declarationMap": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["vite/client"]
   },
   "include": ["src/**/*", "server/**/*", "db/**/*"],
   "exclude": ["node_modules", "dist"]
